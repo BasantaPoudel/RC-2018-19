@@ -19,7 +19,7 @@ int main(void){
   int fd,n;
   struct hostent *hostptr;
   struct sockaddr_in addr;
-  //int addrlen;
+  int addrlen;
   //char msg[MAX],
   char buffer[128];
 
@@ -34,7 +34,9 @@ int main(void){
 
 	addrlen = sizeof(addr);
 
-  n=recvfrom(fd, buffer, 128, 0, (struct sockaddr*) &addr, sizeof(addr));
+  n=recvfrom(fd, buffer, 128, 0, (struct sockaddr*)&addr, &addrlen);
+//  n=sendto(fd, "Hello!\n", 7, 0, (struct sockaddr*)&addr, sizeof(addr));
+
   if(n==-1)exit(1);
   write(1,"echo: ", 6); //stdout
   write(1,buffer, n); //stdout
