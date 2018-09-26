@@ -10,7 +10,6 @@
 
 #define PORT 58000
 /////
-
 int main(void)
   {
     int fd,n;
@@ -26,32 +25,25 @@ int main(void)
 hostptr=gethostbyname("basanta-UX430UQ");
 memset((void*)&addr,(int)'\0',sizeof(addr));
 addr.sin_family = AF_INET;
-addr.sin_addr.s_addr = ((struct in_addr *)
-      (hostptr->h_addr_list[0]))->s_addr;
-addr.sin_port = htons(PORT);
+addr.sin_addr.s_addr = htonl(INADDR_ANY);
+addr.sin_port = htons((u_short)PORT);
 
 n=connect(fd,(struct sockaddr*)&addr,sizeof(addr));
 if(n==-1)exit(1);//error
 
 ptr=strcpy(buffer,"Hello\n");
+
 nbytes=7;
 nleft=nbytes;
 
-      while (nleft>0) {nwritten=write(fd,ptr,nleft);
+while (nleft>0) {nwritten=write(fd,ptr,nleft);
         if(nwritten<=0)exit(1);
         nleft-=nwritten;
         ptr+=nwritten;
-      }
-  nleft=nbytes;
-  ptr=&buffer[0];
-      while (nleft>0) {nread=read(fd,ptr,nleft);
-        if(nread==-1)exit(1);
-        else if(nread==0)break;
-        nleft-=nread;
-        ptr +=nread;
-      }
-nread=nbytes-nleft;
-close(fd);
+}
 
+//write(1,"echo: ",6);//stdout
+//write(1,buffer,nread);//stdout
+close(fd);
 exit(0);
 }
