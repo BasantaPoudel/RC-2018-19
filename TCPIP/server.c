@@ -10,62 +10,43 @@
 
 #define PORT 58000
 
-int main(){
-int fd, nbytes, nleft, nwritten, nread;
-char *ptr, buffer[128];
-ptr=strcpy(buffer,"Hello\n");
-nbytes=7;
-nleft=nbytes;
+int main(void){
+  int fd,addrlen,newfd;
+  int n,nw;
+  char *ptr, buffer[128];
+  struct hostent *hostptr;
+  struct sockaddr_in addr;
 
+ if((fd=socket(AF_INET,SOCK_STREAM,0))==-1){
+   printf("Not created\n" );
+ exit(1);} // TCP SOCKET
+ //hostptr=gethostbyname("basanta-UX430UQ");
 
-//TCP Server
- while (nleft>0) {nwritten=write(fd,ptr,nleft);
-   if(nwritten<=0)exit(1);
-   nleft-=nwritten;
-   ptr+=nwritten;
+ memset((void*)&addr,(int)'\0',sizeof(addr));
+ addr.sin_family = AF_INET;
+ addr.sin_addr.s_addr = (INADDR_ANY);
+ addr.sin_port = htons(PORT);
+
+ if(bind(fd,(struct sockaddr*)&addr,sizeof(addr))==-1){
+   printf("could not create bind socket\n");
+  exit(1);}
+
+ if(listen(fd,5)==-1){
+   printf("could not create listen socket\n");
+  exit(1);}
+
+ while (1) {addrlen=sizeof(addr);
+   if ((newfd=accept(fd,(struct sockaddr*)&addr,&addrlen))==-1)
+      exit(1);
+   while ((n=read(newfd,buffer,128))!=0){
+     if (n==-1)
+      exit(1);
+     ptr=&buffer[0];
+     while (n>0) {if((nw=write(newfd,ptr,n))<=0)exit(1);
+       n-=nw; ptr+=nw;}
+     }
+     close(newfd);
+   }
+   /*close(fd);
+   exit(0);*/
  }
- while (nleft>0) {nread=read(fd,ptr,nleft);
-   if(nread==-1)exit(1);
-   else if(nread==0)break;
-   nleft-=nread;
- }
- nread=nbytes-nleft;
- close(fd);
- write(1,"echo: ",6);//stdout
- write(1,buffer,nread);//stdout
- exit(0);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-//
-//
-// fd=socket(AF_INET,SOCK_STREAM,0);
-//
-// memset((void*)&serveraddr,(int)'\0',sizeof(serveraddr));
-// serveraddr.sin_family = AF_INET;
-// serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
-// serveraddr.sin_port = htons((u_short)PORT);
-//
-// bind(fd,(struct sockaddr*)&serveraddr,
-//         sizeof(serveraddr));
-//
-// listen(fd,5);
-//
-// clientlen = sizeof(clientaddr);
-// newfd = accept(fd,(struct sockaddr*)&clientaddr,
-//         &clientlen);
-//
-//
-// read(newfd,...);
-// write(newfd,...);
-// close(fd); close(newfd);

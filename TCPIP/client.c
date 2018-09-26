@@ -16,24 +16,41 @@ int main(void)
     int fd,n;
     struct sockaddr_in addr;
     struct hostent *hostptr;
-    // int addrlen;
-    // struct hostent *h;
-    // int clientlen;
-//TCP Client
-// Ex 6 Part 1 :socket
-fd=socket(AF_INET,SOCK_STREAM,0);
+    int nbytes, nleft, nwritten, nread;
+    char *ptr, buffer[128];
+
+fd=socket(AF_INET,SOCK_STREAM,0); // TCP SOCKET
 if(fd==-1)exit(1);//error
 
-hostptr=gethostbyname("basanta-UX430UQ");
-
+// hostptr=gethostbyname("basanta-UX430UQ");
 memset((void*)&addr,(int)'\0',sizeof(addr));
 addr.sin_family = AF_INET;
-addr.sin_addr.s_addr = ((struct in_addr *)(hostptr->h_addr_list[0]))->s_addr;
-addr.sin_port = htons((u_short)PORT);
-// Ex 6 Part 2 :connect
+addr.sin_addr.s_addr = (INADDR_ANY);
+addr.sin_port = htons(PORT);
+
 n=connect(fd,(struct sockaddr*)&addr,sizeof(addr));
 if(n==-1)exit(1);//error
-// write(fd,...);
-// read(fd,...);
-// close(fd);
+
+ptr=strcpy(buffer,"Hello\n");
+nbytes=7;
+nleft=nbytes;
+
+      while (nleft>0) {nwritten=write(fd,ptr,nleft);
+        if(nwritten<=0)exit(1);
+        nleft-=nwritten;
+        ptr+=nwritten;
+      }
+  nleft=nbytes;
+  ptr=&buffer[0];
+      while (nleft>0) {nread=read(fd,ptr,nleft);
+        if(nread==-1)exit(1);
+        else if(nread==0)break;
+        nleft-=nread;
+        ptr +=nread;
+      }
+nread=nbytes-nleft;
+close(fd);
+write(1,"echo: ",6);//stdout
+write(1,buffer,nread);//stdout
+exit(0);
 }
