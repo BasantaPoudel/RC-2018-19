@@ -20,11 +20,12 @@ int main(void){
  if((fd=socket(AF_INET,SOCK_STREAM,0))==-1){
    printf("Not created\n" );
  exit(1);} // TCP SOCKET
- //hostptr=gethostbyname("basanta-UX430UQ");
+ hostptr=gethostbyname("basanta-UX430UQ");
 
  memset((void*)&addr,(int)'\0',sizeof(addr));
  addr.sin_family = AF_INET;
- addr.sin_addr.s_addr = (INADDR_ANY);
+ addr.sin_addr.s_addr = ((struct in_addr *)
+       (hostptr->h_addr_list[0]))->s_addr;
  addr.sin_port = htons(PORT);
 
  if(bind(fd,(struct sockaddr*)&addr,sizeof(addr))==-1){
@@ -45,6 +46,10 @@ int main(void){
      while (n>0) {if((nw=write(newfd,ptr,n))<=0)exit(1);
        n-=nw; ptr+=nw;}
      }
+
+     write(1,"echo: ",6);//stdout
+     write(1,buffer,nread);//stdout
+     
      close(newfd);
    }
    /*close(fd);
