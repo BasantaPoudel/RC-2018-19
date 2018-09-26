@@ -35,15 +35,24 @@ ptr=strcpy(buffer,"Hello\n");
 
 nbytes=7;
 nleft=nbytes;
-
+ptr=&buffer[0];
 while (nleft>0) {nwritten=write(fd,ptr,nleft);
         if(nwritten<=0)exit(1);
         nleft-=nwritten;
         ptr+=nwritten;
 }
 
-//write(1,"echo: ",6);//stdout
-//write(1,buffer,nread);//stdout
+while(nleft>0){nread=read(fd,ptr,nleft);
+    if (nread==-1)exit(1);
+    else if(nread==0) break;
+    nleft-=nread;
+    ptr+=nread;
+}
+
+nread=nbytes-nleft;
+printf("%s\n",buffer );
 close(fd);
+
+
 exit(0);
 }

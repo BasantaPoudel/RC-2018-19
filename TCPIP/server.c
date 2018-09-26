@@ -40,26 +40,14 @@ int main(void){
  while (1) {addrlen=sizeof(addr);
    if ((newfd=accept(fd,(struct sockaddr*)&addr,&addrlen))==-1)
       exit(1);
-   printf("Blocking Untill signal received from client\n");
-
-   nleft=nbytes;
-   ptr=&buffer[0];
-   while(nleft>0){
-   while ((nread=read(newfd,ptr,nleft))!=0){
-     if (nread==-1)exit(1);
-     else if (nread==0)break;
-     nleft-=nread;
-     ptr+=nread;
-     // while (n>0) {if((nw=write(newfd,ptr,n))<=0)exit(1);
-     //   n-=nw; ptr+=nw;}
-     }
+  while ((n=read(newfd,buffer,128))!=0){if(n==-1)exit(1);
+    ptr=&buffer[0];
+    while (n>0){if((nw=write(newfd,ptr,n))<=0)exit(1);
+      n-=nw;ptr+=nw;}
+    }
+   printf("%s\n",buffer);
+   close(fd);
+   close(newfd);
    }
-     //
-     // write(1,"echo: ",6);//stdout
-     write(1,buffer,nread);//stdout
-
-     close(newfd);
-   }
-   /*close(fd);
-   exit(0);*/
+   exit(0);
  }
