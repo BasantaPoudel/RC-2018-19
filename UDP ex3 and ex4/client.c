@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+
 #define PORT 58000 // Port to be passed in htons
 
 // struct sockaddr_in{
@@ -24,9 +25,8 @@ struct sockaddr_in addr;
 struct hostent *hostptr;
 // int addrlen;
 // char msg[80], buffer[80];
-////
 //UDP Client
-fd=socket(AF_INET,SOCK_DGRAM,0);          // UDP SOCKET //
+fd=socket(AF_INET,SOCK_DGRAM,0); // UDP SOCKET //
 if(fd==-1)exit(1);
 
 hostptr=gethostbyname("basanta-UX430UQ");
